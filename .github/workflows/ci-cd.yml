@@ -1,9 +1,9 @@
 name: Build and Push Docker Image
 
 on:
-    push:
-      branches:
-        - main
+  push:
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
@@ -36,9 +36,8 @@ jobs:
       - name: Install gke-gcloud-auth-plugin
         run: |
           echo "Installing gke-gcloud-auth-plugin..."
-          curl -LO https://github.com/google-gke/gke-gcloud-auth-plugin/releases/download/v0.3.0/gke-gcloud-auth-plugin-linux-amd64.tar.gz
-          tar -xvzf gke-gcloud-auth-plugin-linux-amd64.tar.gz
-          sudo mv gke-gcloud-auth-plugin /usr/local/bin/
+          gcloud components install gke-gcloud-auth-plugin
+  
 
       - name: Set up kubectl
         env:
