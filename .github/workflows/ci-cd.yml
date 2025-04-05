@@ -33,6 +33,13 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Install GKE gcloud auth plugin
+        run: |
+          echo "Installing gke-gcloud-auth-plugin..."
+          curl -LO https://github.com/google-gke/gke-gcloud-auth-plugin/releases/download/v0.3.0/gke-gcloud-auth-plugin-linux-amd64.tar.gz
+          tar -xvzf gke-gcloud-auth-plugin-linux-amd64.tar.gz
+          sudo mv gke-gcloud-auth-plugin /usr/local/bin/
+
       - name: Set up kubectl
         env:
           GKE_CLUSTER: ${{ vars.GKE_CLUSTER }}
@@ -46,9 +53,8 @@ jobs:
           export APP_NAME="${{ env.APP_NAME }}"
           export DOCKER_IMAGE="${{ env.DOCKER_IMAGE }}"
         
-          envsubst '$APP_NAME $DOCKER_IMAGE' < k8s/deployment.yml > k8s/deployment-rendered.yml
-          envsubst '$APP_NAME $DOCKER_IMAGE' < k8s/service.yml > k8s/service-rendered.yml
-
+          envsubst '${APP_NAME} ${DOCKER_IMAGE}' < k8s/deployment.yml > k8s/deployment-rendered.yml
+          envsubst '${APP_NAME} ${DOCKER_IMAGE}' < k8s/service.yml > k8s/service-rendered.yml
 
       - name: Show rendered manifests
         run: |
