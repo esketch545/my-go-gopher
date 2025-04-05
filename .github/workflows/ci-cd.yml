@@ -43,8 +43,18 @@ jobs:
 
       - name: Replace placeholders in Kubernetes manifests
         run: |
-          envsubst < k8s/deployment.yml > k8s/deployment-rendered.yml
-          envsubst < k8s/service.yml > k8s/service-rendered.yml
+          export APP_NAME="${{ env.APP_NAME }}"
+          export DOCKER_IMAGE="${{ env.DOCKER_IMAGE }}"
+        
+          envsubst '${APP_NAME} ${DOCKER_IMAGE}' < k8s/deployment.yml > k8s/deployment-rendered.yml
+          envsubst '${APP_NAME} ${DOCKER_IMAGE}' < k8s/service.yml > k8s/service-rendered.yml
+
+      - name: Show rendered manifests
+        run: |
+          echo "--- Deployment ---"
+          cat k8s/deployment-rendered.yml
+          echo "--- Service ---"
+          cat k8s/service-rendered.yml
 
       - name: Deploy to GKE
         run: |
