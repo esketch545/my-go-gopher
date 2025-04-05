@@ -46,8 +46,9 @@ jobs:
           export APP_NAME="${{ env.APP_NAME }}"
           export DOCKER_IMAGE="${{ env.DOCKER_IMAGE }}"
         
-          envsubst '${APP_NAME} ${DOCKER_IMAGE}' < k8s/deployment.yml > k8s/deployment-rendered.yml
-          envsubst '${APP_NAME} ${DOCKER_IMAGE}' < k8s/service.yml > k8s/service-rendered.yml
+          envsubst '$APP_NAME $DOCKER_IMAGE' < k8s/deployment.yml > k8s/deployment-rendered.yml
+          envsubst '$APP_NAME $DOCKER_IMAGE' < k8s/service.yml > k8s/service-rendered.yml
+
 
       - name: Show rendered manifests
         run: |
