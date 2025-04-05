@@ -33,7 +33,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Install GKE gcloud auth plugin
+      - name: Install gke-gcloud-auth-plugin
         run: |
           echo "Installing gke-gcloud-auth-plugin..."
           curl -LO https://github.com/google-gke/gke-gcloud-auth-plugin/releases/download/v0.3.0/gke-gcloud-auth-plugin-linux-amd64.tar.gz
