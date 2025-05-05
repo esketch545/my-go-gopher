@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: $APP_NAME  # Dynamically replaced
+  name: my-go-gopher  # Replaced $APP_NAME with 'my-go-gopher'
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: $APP_NAME  # Dynamically replaced
+      app: my-go-gopher  # Replaced $APP_NAME with 'my-go-gopher'
   template:
     metadata:
       labels:
-        app: $APP_NAME  # Dynamically replaced
+        app: my-go-gopher  # Replaced $APP_NAME with 'my-go-gopher'
     spec:
       containers:
-        - name: $APP_NAME  # Dynamically replaced
-          image: ${DOCKER_IMAGE}:latest  # Dynamic Docker image
+        - name: my-go-gopher  # Replaced $APP_NAME with 'my-go-gopher'
+          image: esketch545/my-go-gopher:latest
           ports:
             - containerPort: 8080

@@ -1,12 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: $APP_NAME-service  # Dynamically replaced
+  name: my-go-gopher-service  # Replaced $APP_NAME with 'my-go-gopher-service'
 spec:
   selector:
-    app: $APP_NAME  # Dynamically replaced
+    app: my-go-gopher  # Replaced $APP_NAME with 'my-go-gopher'
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
-  type: LoadBalancer
