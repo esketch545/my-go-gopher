@@ -35,9 +35,11 @@ jobs:
           IMAGE_TAG=sha-${{ github.sha }}
           sed -i "s|image:.*|image: $DOCKER_IMAGE:$IMAGE_TAG|g" k8s/deployment.yml
 
+      - name: Push changes to repository
+        run: |
           git config --global user.email "ci@github.com"
           git config --global user.name "GitHub Actions"
-
+          git remote set-url origin https://github.com/${{ github.repository }}.git
           git add k8s/deployment.yml
           git commit -m "Update image to $IMAGE_TAG [skip ci]" || echo "No changes to commit"
-          git push
+          git push https://github.com/${{ github.repository }} ${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} HEAD:main
