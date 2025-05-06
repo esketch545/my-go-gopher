@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build, Push, and Trigger ArgoCD
 
 on:
   push:
@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      APP_NAME: my-go-gopher  # Define app name as a variable
       DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
 
     steps:
@@ -25,47 +24,20 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t $DOCKER_IMAGE:latest .
-          docker push $DOCKER_IMAGE:latest
-
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Setup Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          gcloud_version: "latest" # Or a specific version
-          service_account_key: ${{ secrets.GCP_SA_KEY }} # Your service account key
-
-      - name: Install gke-gcloud-auth-plugin
-        run: gcloud components install gke-gcloud-auth-plugin
-
-      - name: Set up kubectl
+          IMAGE_TAG=sha-${{ github.sha }}
+          docker build -t $DOCKER_IMAGE:$IMAGE_TAG .
+          docker push $DOCKER_IMAGE:$IMAGE_TAG
         env:
-          GKE_CLUSTER: ${{ vars.GKE_CLUSTER }}
-          GKE_ZONE: ${{ vars.GKE_ZONE }}
-          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
-        run: |
-          gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GCP_PROJECT_ID
+          DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
 
-      - name: Replace placeholders in Kubernetes manifests
+      - name: Update deployment YAML with new image
         run: |
-          export APP_NAME="${{ env.APP_NAME }}"
-          export DOCKER_IMAGE="${{ env.DOCKER_IMAGE }}"
-        
-          envsubst '${APP_NAME} ${DOCKER_IMAGE}' < k8s/deployment.yml > k8s/deployment-rendered.yml
-          envsubst '${APP_NAME} ${DOCKER_IMAGE}' < k8s/service.yml > k8s/service-rendered.yml
+          IMAGE_TAG=sha-${{ github.sha }}
+          sed -i "s|image:.*|image: $DOCKER_IMAGE:$IMAGE_TAG|g" k8s/deployment.yml
 
-      - name: Show rendered manifests
-        run: |
-          echo "--- Deployment ---"
-          cat k8s/deployment-rendered.yml
-          echo "--- Service ---"
-          cat k8s/service-rendered.yml
+          git config --global user.email "ci@github.com"
+          git config --global user.name "GitHub Actions"
 
-      - name: Deploy to GKE
-        run: |
-          kubectl apply -f k8s/deployment-rendered.yml
-          kubectl apply -f k8s/service-rendered.yml
+          git add k8s/deployment.yml
+          git commit -m "Update image to $IMAGE_TAG [skip ci]" || echo "No changes to commit"
+          git push
