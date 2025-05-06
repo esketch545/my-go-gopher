@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-go-gopher  # Replaced $APP_NAME with 'my-go-gopher'
+  name: my-go-gopher
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: my-go-gopher  # Replaced $APP_NAME with 'my-go-gopher'
+      app: my-go-gopher
   template:
     metadata:
       labels:
-        app: my-go-gopher  # Replaced $APP_NAME with 'my-go-gopher'
+        app: my-go-gopher
     spec:
       containers:
-        - name: my-go-gopher  # Replaced $APP_NAME with 'my-go-gopher'
-          image: esketch545/my-go-gopher:latest
+        - name: my-go-gopher
+          image: esketch545/my-go-gopher:v2
           ports:
             - containerPort: 8080
