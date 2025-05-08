@@ -5,6 +5,14 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+env:
+  ACTIONS_STEP_DEBUG: true
+  ACTIONS_RUNNER_DEBUG: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -42,4 +50,6 @@ jobs:
           git add k8s/deployment.yml
           git commit -m "Update image to $IMAGE_TAG [skip ci]" || echo "No changes to commit"
           
+          echo "Repository: ${{ github.repository }}"
+
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
