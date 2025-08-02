@@ -50,6 +50,4 @@ jobs:
           git add k8s/deployment.yml
           git commit -m "Update image to $IMAGE_TAG [skip ci]" || echo "No changes to commit"
           
-          echo "Repository: ${{ github.repository }}"
-
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
