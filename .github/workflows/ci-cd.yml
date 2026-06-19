@@ -38,17 +38,16 @@ jobs:
         env:
           DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
 
-      - name: Clone and Checkout gitops repo
+      - name: Clone gitops repo
         run: |
           git clone https://x-access-token:${{ secrets.GITOPS_WRITE_TOKEN }}@github.com/${{ vars.GITOPS_REPO }}.git gitops-repo
-          git checkout gitops-repo
 
       - name: Update deployment YAML with new image and push changes to repository
         run: |
           GITOPS_DEPLOYMENT_MANIFEST_PATH=apps/${{ github.event.repository.name }}/deployment.yml
           IMAGE_TAG=sha-${{ github.sha }}
           
-          sed -i "s|image:.*|image: $DOCKER_IMAGE:$IMAGE_TAG|g" ${{ vars.GITOPS_REPO }}/$GITOPS_DEPLOYMENT_MANIFEST_PATH 
+          sed -i "s|image:.*|image: $DOCKER_IMAGE:$IMAGE_TAG|g" gitops-repo/$GITOPS_DEPLOYMENT_MANIFEST_PATH 
       
           git config --global user.email "ci@github.com"
           git config --global user.name "GitHub Actions"
