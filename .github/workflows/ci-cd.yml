@@ -56,4 +56,4 @@ jobs:
           git add $GITOPS_DEPLOYMENT_MANIFEST_PATH
           git commit -m "Update image to $IMAGE_TAG [skip ci]" || echo "No changes to commit"
           
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ vars.GITOPS_REPO }} HEAD:main
+          git push
