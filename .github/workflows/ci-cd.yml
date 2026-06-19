@@ -40,14 +40,16 @@ jobs:
 
       - name: Update deployment YAML with new image and push changes to repository
         run: |
+          GITOPS_DEPLOYMENT_MANIFEST_PATH=apps/${{ github.repository }}/deployment.yml
           IMAGE_TAG=sha-${{ github.sha }}
-          sed -i "s|image:.*|image: $DOCKER_IMAGE:$IMAGE_TAG|g" k8s/deployment.yml
+          
+          sed -i "s|image:.*|image: $DOCKER_IMAGE:$IMAGE_TAG|g" $GITOPS_DEPLOYMENT_MANIFEST_PATH
       
           git config --global user.email "ci@github.com"
           git config --global user.name "GitHub Actions"
           
-          git remote set-url origin https://github.com/${{ github.repository }}.git
-          git add k8s/deployment.yml
+          git remote set-url origin https://github.com/${{ vars.GITOPS_REPO }}.git
+          git add $GITOPS_DEPLOYMENT_MANIFEST_PATH
           git commit -m "Update image to $IMAGE_TAG [skip ci]" || echo "No changes to commit"
           
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ vars.GITOPS_REPO }} HEAD:main
