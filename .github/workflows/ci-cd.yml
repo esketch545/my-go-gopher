@@ -47,7 +47,7 @@ jobs:
           GITOPS_DEPLOYMENT_MANIFEST_PATH=apps/${{ github.event.repository.name }}/deployment.yml
           IMAGE_TAG=sha-${{ github.sha }}
           
-          sed -i gitops-repo/$GITOPS_DEPLOYMENT_MANIFEST_PATH "s|image:.*|image: $DOCKER_IMAGE:$IMAGE_TAG|g"
+          sed -i "s|image:.*|image: $DOCKER_IMAGE:$IMAGE_TAG|g" gitops-repo/$GITOPS_DEPLOYMENT_MANIFEST_PATH 
       
           git config --global user.email "ci@github.com"
           git config --global user.name "GitHub Actions"
